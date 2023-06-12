@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-contract FODNFT is ERC1155, Ownable {
+contract FODNFT is ERC1155, Ownable { 
     using SafeMath for uint256;
     
     uint256 public constant MAX_SUPPLY_PRESTIGE = 100;
