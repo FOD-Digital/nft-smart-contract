@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// GOERLI : 0x0A0C24E401DccF48a294B5F21943C1EDAA816A2e
+// GOERLI : 0x24FaD37baA07d79DfCcf19d8AA94E54edbC18EED
 pragma solidity ^0.8.1;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -23,6 +23,7 @@ contract FODNFT is ERC1155, Ownable {
     uint256 public supplyOrdinary = 1;
 
     mapping(address => uint256) public _owners;
+    mapping(address => uint256) public lastMintedRarity;
 
     constructor() ERC1155("https://bafybeic2h4dplssisykqurcnc5e3a4mk2kdac7n3bn6iziwzx2b3iwoupi.ipfs.nftstorage.link/{id}.json") {
         _mint(msg.sender, TOKEN_ID_PRESTIGE, 1, "");
@@ -40,17 +41,20 @@ contract FODNFT is ERC1155, Ownable {
             require(supplyPrestige + amount <= MAX_SUPPLY_PRESTIGE, "Mint: Max supply reached");
             _mint(msg.sender, TOKEN_ID_PRESTIGE, amount, "");
             supplyPrestige += amount;
-            _owners[msg.sender] += amount;
 
         } else {
             require(msg.value == amount * MINT_PRICE, "Mint: Incorrect payment");
             require(supplyOrdinary + amount <= MAX_SUPPLY_ORDINARY, "Mint: Max supply reached");
             _mint(msg.sender, TOKEN_ID_ORDINARY, amount, "");
             supplyOrdinary += amount;
-            _owners[msg.sender] += amount;
         }
 
-        return rand;
+        _owners[msg.sender] += amount;
+        lastMintedRarity[msg.sender] = rand;
+    }
+
+    function getLastMintedRarity(address user) external view returns (uint256) {
+        return lastMintedRarity[user];
     }
 
     function uri(uint256 _id) override public view returns (string memory) {
