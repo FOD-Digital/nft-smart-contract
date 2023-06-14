@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// GOERLI : 0x44eE438BAB53c377BB741A400E83cD2D92c3741a
+// GOERLI : 0x0A0C24E401DccF48a294B5F21943C1EDAA816A2e
 pragma solidity ^0.8.1;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -17,7 +17,7 @@ contract FODNFT is ERC1155, Ownable {
     uint256 public constant TOKEN_ID_ORDINARY = 2;
 
     uint256 public MAX_PER_WALLET = 5;
-    uint256 public MINT_PRICE = 0.0000001 ether; 
+    uint256 public MINT_PRICE = 0.000001 ether; 
     
     uint256 public supplyPrestige = 1;
     uint256 public supplyOrdinary = 1;
@@ -29,7 +29,7 @@ contract FODNFT is ERC1155, Ownable {
         _mint(msg.sender, TOKEN_ID_ORDINARY, 1, "");
     }
 
-    function mintPack(uint256 amount) external payable {
+    function mintPack(uint256 amount) external payable returns (uint256) {
         require(amount > 0, "quantity of tokens cannot be less than or equal to 0");
         require(_owners[msg.sender] + amount <= MAX_PER_WALLET, "exceed max supply of per wallet amount");
 
@@ -49,6 +49,8 @@ contract FODNFT is ERC1155, Ownable {
             supplyOrdinary += amount;
             _owners[msg.sender] += amount;
         }
+
+        return rand;
     }
 
     function uri(uint256 _id) override public view returns (string memory) {
