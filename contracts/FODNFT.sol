@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// GOERLI : 0x05DA86E5eF89986A6ac77C4c3C944bD8a7865b12
+// GOERLI : 0x44eE438BAB53c377BB741A400E83cD2D92c3741a
 pragma solidity ^0.8.1;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -17,7 +17,7 @@ contract FODNFT is ERC1155, Ownable {
     uint256 public constant TOKEN_ID_ORDINARY = 2;
 
     uint256 public MAX_PER_WALLET = 5;
-    uint256 public MINT_PRICE = 0.01 ether; 
+    uint256 public MINT_PRICE = 0.0000001 ether; 
     
     uint256 public supplyPrestige = 1;
     uint256 public supplyOrdinary = 1;
