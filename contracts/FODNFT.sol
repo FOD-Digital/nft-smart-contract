@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// GOERLI : 0x24FaD37baA07d79DfCcf19d8AA94E54edbC18EED
+// GOERLI : 0x0d69Ed2c842AacC557e0bC38F16463600Ddc45aE
 pragma solidity ^0.8.1;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
@@ -22,39 +22,37 @@ contract FODNFT is ERC1155, Ownable {
     uint256 public supplyPrestige = 1;
     uint256 public supplyOrdinary = 1;
 
-    mapping(address => uint256) public _owners;
-    mapping(address => uint256) public lastMintedRarity;
+    mapping(address => uint256) public _ownersPackCount;
+    mapping(address => uint256) public _lastMintedRarity;
 
     constructor() ERC1155("https://bafybeic2h4dplssisykqurcnc5e3a4mk2kdac7n3bn6iziwzx2b3iwoupi.ipfs.nftstorage.link/{id}.json") {
         _mint(msg.sender, TOKEN_ID_PRESTIGE, 1, "");
         _mint(msg.sender, TOKEN_ID_ORDINARY, 1, "");
     }
 
-    function mintPack(uint256 amount) external payable returns (uint256) {
-        require(amount > 0, "quantity of tokens cannot be less than or equal to 0");
-        require(_owners[msg.sender] + amount <= MAX_PER_WALLET, "exceed max supply of per wallet amount");
+    function mintPack() external payable {
+        require(_ownersPackCount[msg.sender] + 1 <= MAX_PER_WALLET, "exceed max supply of per wallet amount");
 
-        uint256 rand = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty)))%2;
+        uint256 randomNumber = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp))) % 10 + 1;
 
-        if(rand == 0){
-            require(msg.value == amount * MINT_PRICE, "Mint: Incorrect payment");
-            require(supplyPrestige + amount <= MAX_SUPPLY_PRESTIGE, "Mint: Max supply reached");
-            _mint(msg.sender, TOKEN_ID_PRESTIGE, amount, "");
-            supplyPrestige += amount;
-
+        if (randomNumber == 1) {
+            require(msg.value == MINT_PRICE, "Mint: Incorrect payment");
+            require(supplyPrestige + 1 <= MAX_SUPPLY_PRESTIGE, "Mint: Max supply reached");
+            _mint(msg.sender, TOKEN_ID_PRESTIGE, 1, "");
+            supplyPrestige++;
         } else {
-            require(msg.value == amount * MINT_PRICE, "Mint: Incorrect payment");
-            require(supplyOrdinary + amount <= MAX_SUPPLY_ORDINARY, "Mint: Max supply reached");
-            _mint(msg.sender, TOKEN_ID_ORDINARY, amount, "");
-            supplyOrdinary += amount;
+            require(msg.value == MINT_PRICE, "Mint: Incorrect payment");
+            require(supplyOrdinary + 1 <= MAX_SUPPLY_ORDINARY, "Mint: Max supply reached");
+            _mint(msg.sender, TOKEN_ID_ORDINARY, 1, "");
+            supplyOrdinary++;
         }
 
-        _owners[msg.sender] += amount;
-        lastMintedRarity[msg.sender] = rand;
+        _ownersPackCount[msg.sender] += 1;
+        _lastMintedRarity[msg.sender] = randomNumber;
     }
 
     function getLastMintedRarity(address user) external view returns (uint256) {
-        return lastMintedRarity[user];
+        return _lastMintedRarity[user];
     }
 
     function uri(uint256 _id) override public view returns (string memory) {
